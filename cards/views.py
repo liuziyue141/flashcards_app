@@ -4,12 +4,18 @@ from django.views.generic import (
     ListView,
     CreateView,
     UpdateView,
+    DeleteView,
 )
 from django.shortcuts import get_object_or_404, redirect
 from .forms import CardCheckForm
 
 from .models import Card
 import random
+
+class CardDeleteView(DeleteView):
+    model = Card
+    success_url = reverse_lazy('card-list')  
+    template_name = 'cards/card_confirm_delete.html'  
 
 class CardListView(ListView):
     model = Card
@@ -24,7 +30,6 @@ class CardUpdateView(CardCreateView, UpdateView):
 class BoxView(CardListView):
     template_name = "cards/box.html"
     form_class = CardCheckForm
-
 
     def get_queryset(self):
         return Card.objects.filter(box=self.kwargs["box_num"])

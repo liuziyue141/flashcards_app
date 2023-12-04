@@ -7,6 +7,10 @@
         <a href="{% url 'card-update' card.id %}" role="button">
             ✏️ Edit Card
         </a>
+        <div></div>
+        <a href="{% url 'card-delete' card.id %}" role="button" onclick="return confirm('Are you sure you want to delete this card?');">
+            ❎ Delete
+        </a>
     {% else %}
         <details>
             <summary>Reveal Answer</summary>

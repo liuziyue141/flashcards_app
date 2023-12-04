@@ -3,6 +3,8 @@
 from django.urls import path
 #from django.views.generic import TemplateView
 from . import views
+from .views import CardDeleteView
+
 
 urlpatterns = [
     path(
@@ -25,4 +27,10 @@ urlpatterns = [
         views.BoxView.as_view(),
         name="box"
     ),
+    path(
+        'card/delete/<int:pk>/',
+        CardDeleteView.as_view(),
+        name='card-delete'
+    ),
+
 ]
