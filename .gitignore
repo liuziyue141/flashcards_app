@@ -1,0 +1,8 @@
+# Ignore all .log files
+*.log
+
+# Ignore .DS_Store (common in macOS)
+.DS_Store
+
+# Ignore the SQLite database file for Django projects
+db.sqlite3
