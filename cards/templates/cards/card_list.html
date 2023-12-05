@@ -5,13 +5,41 @@
     <h2>
         All Cards
     </h2>
-    <a href="{% url 'card-create' %}" role="button">
-        ✨ Create New Card
-    </a>
-    {% for card in card_list %}
-        {% ifchanged %}
-            <h3>🗃 {{ card.box | ordinal}} Box</h3>
-        {% endifchanged %}
-        {% include "cards/card.html" %}
-    {% endfor %}
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <a href="{% url 'card-create' %}" role="button" style="text-decoration: none;">✨ Create New Card</a>
+        <div>
+            <a href="?sort_by=box" style="text-decoration: none; margin-right: 10px;">Sort by Box</a> | 
+            <a href="?sort_by=topic" style="text-decoration: none;">Sort by Topic</a>
+        </div>
+    </div>
+    {% if request.GET.sort_by == 'topic' %}
+    <!-- Logic to display cards sorted by topic -->
+        {% for topic, cards in cards_grouped.items %}
+            <h3>📚 Topic: {{ topic }}</h3>
+            {% for card in cards %}
+                {% include "cards/card.html" %}
+            {% endfor %}
+        {% endfor %}
+    {% else %}
+        {% if hard_cards %}
+            <h3>🗃 Hard Box</h3>
+            {% for card in hard_cards %}
+                {% include "cards/card.html" %}
+            {% endfor %}
+        {% endif %}
+
+        {% if medium_cards %}
+            <h3>🗃 Medium Box</h3>
+            {% for card in medium_cards %}
+                {% include "cards/card.html" %}
+            {% endfor %}
+        {% endif %}
+
+        {% if easy_cards %}
+            <h3>🗃 Easy Box</h3>
+            {% for card in easy_cards %}
+                {% include "cards/card.html" %}
+            {% endfor %}
+        {% endif %}
+    {% endif %}
 {% endblock content %}

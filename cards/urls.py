@@ -3,7 +3,6 @@
 from django.urls import path
 #from django.views.generic import TemplateView
 from . import views
-from .views import CardDeleteView
 
 
 urlpatterns = [
@@ -23,14 +22,26 @@ urlpatterns = [
         name="card-update"
     ),
     path(
-        "box/<int:box_num>",
+        "box/<str:box_name>",
         views.BoxView.as_view(),
         name="box"
     ),
     path(
         'card/delete/<int:pk>/',
-        CardDeleteView.as_view(),
+        views.CardDeleteView.as_view(),
         name='card-delete'
     ),
+    path(
+        'gpt-create',
+        views.GPTCreateView.as_view(),
+        name="GPT-card-creation",
+    ),
+
+    path(
+        'topic/<str:topic_name>/', 
+        views.TopicView.as_view(),
+        name='topic-view',
+        ),
+
 
 ]
