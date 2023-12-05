@@ -89,3 +89,24 @@ class BoxView(CardListView):
             card.move(form.cleaned_data["solved"])
 
         return redirect(request.META.get("HTTP_REFERER"))
+
+class TopicView(ListView):
+    template_name = "cards/topic.html"  # You might need to create this template
+    form_class = CardCheckForm
+
+    def get_queryset(self):
+        return Card.objects.filter(topic=self.kwargs["topic_name"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["topic_name"] = self.kwargs["topic_name"]
+        if self.object_list:
+            context["check_card"] = random.choice(self.object_list)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            card = get_object_or_404(Card, id=form.cleaned_data["card_id"])
+            card.move(form.cleaned_data["solved"])
+        return redirect(request.META.get("HTTP_REFERER"))

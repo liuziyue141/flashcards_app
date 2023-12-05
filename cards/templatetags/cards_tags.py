@@ -22,6 +22,20 @@ def boxes_as_links():
 
     return {"boxes": boxes}
 
+@register.inclusion_tag("cards/box_links.html")
+def topics_as_links():
+    topics = []
+    TOPICS_CHOICE = ['Phonetics', 'Phonology', 'Morphology', 'Syntax', 'Semantics', 'Pragmatics']
+
+    for Topic in TOPICS_CHOICE:
+        card_count = Card.objects.filter(topic=Topic).count()
+        topics.append({
+            "name": Topic,
+            "card_count": card_count,
+        })
+
+    return {"topics": topics}
+
 # def topics_as_links():
 #     boxes = []
 #     for box_num in BOXES:

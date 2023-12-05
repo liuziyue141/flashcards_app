@@ -35,6 +35,13 @@ urlpatterns = [
         'gpt-create',
         views.GPTCreateView.as_view(),
         name="GPT-card-creation",
-    )
+    ),
+
+    path(
+        'topic/<str:topic_name>/', 
+        views.TopicView.as_view(),
+        name='topic-view',
+        ),
+
 
 ]
