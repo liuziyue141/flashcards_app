@@ -3,7 +3,13 @@
 from django.db import models
 
 NUM_BOXES = 3
-BOXES = range(1, NUM_BOXES + 1)
+#BOXES = range(1, NUM_BOXES + 1)
+BOX_CHOICES = [
+    ('Easy', 'Easy'),
+    ('Medium', 'Medium'),
+    ('Hard', 'Hard'),
+]
+
 TOPIC_CHOICES = (
     ('Phonetics', 'Phonetics'),
     ('Phonology', 'Phonology'),
@@ -16,9 +22,10 @@ TOPIC_CHOICES = (
 class Card(models.Model):
     question = models.CharField(max_length=100)
     answer = models.CharField(max_length=100)
-    box = models.IntegerField(
-        choices=zip(BOXES, BOXES),
-        default=BOXES[0],
+    box = models.CharField(
+        max_length=10,
+        choices=BOX_CHOICES,
+        default=BOX_CHOICES[0][0],
     )
     topic = models.CharField(
         max_length=20, 
@@ -27,11 +34,17 @@ class Card(models.Model):
     )
     date_created = models.DateTimeField(auto_now_add=True)
     def move(self, solved):
-        new_box = self.box + 1 if solved else BOXES[0]
-
-        if new_box in BOXES:
-            self.box = new_box
-            self.save()
+        if solved:
+            if self.box == 'Hard':
+                new_box = 'Medium'
+            elif self.box == 'Medium':
+                new_box = 'Easy'
+            else:  # 'Easy' remains the same
+                new_box = 'Easy'
+        else:  # If not solved, everything goes to 'Hard'
+            new_box = 'Hard'
+        self.box = new_box
+        self.save()
 
         return self
     def __str__(self):

@@ -21,7 +21,18 @@ class CardDeleteView(DeleteView):
 
 class CardListView(ListView):
     model = Card
-    queryset = Card.objects.all().order_by("box", "-date_created")
+    template_name = 'cards/card_list.html'  # Update with your correct template path
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+
+        # Add in the categorized cards
+        context['hard_cards'] = Card.objects.filter(box='Hard')
+        context['medium_cards'] = Card.objects.filter(box='Medium')
+        context['easy_cards'] = Card.objects.filter(box='Easy')
+
+        return context
 class CardCreateView(CreateView):
     model = Card
     fields = ["question", "answer", "box", "topic"]
@@ -49,11 +60,11 @@ class BoxView(CardListView):
     form_class = CardCheckForm
 
     def get_queryset(self):
-        return Card.objects.filter(box=self.kwargs["box_num"])
+        return Card.objects.filter(box=self.kwargs["box_name"])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["box_number"] = self.kwargs["box_num"]
+        context["box_name"] = self.kwargs["box_name"]
         if self.object_list:
             context["check_card"] = random.choice(self.object_list)
         return context

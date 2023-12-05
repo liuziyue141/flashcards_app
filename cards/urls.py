@@ -22,7 +22,7 @@ urlpatterns = [
         name="card-update"
     ),
     path(
-        "box/<int:box_num>",
+        "box/<str:box_name>",
         views.BoxView.as_view(),
         name="box"
     ),

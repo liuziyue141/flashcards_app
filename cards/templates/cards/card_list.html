@@ -8,10 +8,24 @@
     <a href="{% url 'card-create' %}" role="button">
         ✨ Create New Card
     </a>
-    {% for card in card_list %}
-        {% ifchanged %}
-            <h3>🗃 {{ card.box | ordinal}} Box</h3>
-        {% endifchanged %}
-        {% include "cards/card.html" %}
-    {% endfor %}
+    {% if hard_cards %}
+        <h3>🗃 Hard Box</h3>
+        {% for card in hard_cards %}
+            {% include "cards/card.html" %}
+        {% endfor %}
+    {% endif %}
+
+    {% if medium_cards %}
+        <h3>🗃 Medium Box</h3>
+        {% for card in medium_cards %}
+            {% include "cards/card.html" %}
+        {% endfor %}
+    {% endif %}
+
+    {% if easy_cards %}
+        <h3>🗃 Easy Box</h3>
+        {% for card in easy_cards %}
+            {% include "cards/card.html" %}
+        {% endfor %}
+    {% endif %}
 {% endblock content %}
