@@ -23,14 +23,27 @@ class CardListView(ListView):
     model = Card
     template_name = 'cards/card_list.html'  # Update with your correct template path
 
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
+    def get_queryset(self):
+        sort_by = self.request.GET.get('sort_by', 'box')
+        if sort_by == 'topic':
+            return Card.objects.all().order_by('topic')
+        else:  # Default to sorting by box
+            return Card.objects.all().order_by('box')
 
-        # Add in the categorized cards
-        context['hard_cards'] = Card.objects.filter(box='Hard')
-        context['medium_cards'] = Card.objects.filter(box='Medium')
-        context['easy_cards'] = Card.objects.filter(box='Easy')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        sort_by = self.request.GET.get('sort_by', 'box')
+        context['show_box'] = sort_by != 'topic'
+
+        if sort_by == 'topic':
+            cards_grouped = {}
+            for card in self.get_queryset().order_by('topic'):
+                cards_grouped.setdefault(card.topic, []).append(card)
+            context['cards_grouped'] = cards_grouped
+        else:
+            context['easy_cards'] = Card.objects.filter(box='Easy').order_by('topic')
+            context['medium_cards'] = Card.objects.filter(box='Medium').order_by('topic')
+            context['hard_cards'] = Card.objects.filter(box='Hard').order_by('topic')
 
         return context
 class CardCreateView(CreateView):
