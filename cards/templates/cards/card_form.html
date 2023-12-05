@@ -7,6 +7,9 @@
     <h2>✏️ Edit Card</h2>
     {% else %}
     <h2>✨ Create New Card</h2>
+    <a href="{% url 'GPT-card-creation' %}" class="h5 text-primary d-block">
+        Generate Flashcards with GPT
+    </a>
     {% endif %}
     <form method="post">
         {% csrf_token %}

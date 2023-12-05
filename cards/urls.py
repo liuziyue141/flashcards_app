@@ -3,7 +3,6 @@
 from django.urls import path
 #from django.views.generic import TemplateView
 from . import views
-from .views import CardDeleteView
 
 
 urlpatterns = [
@@ -29,8 +28,13 @@ urlpatterns = [
     ),
     path(
         'card/delete/<int:pk>/',
-        CardDeleteView.as_view(),
+        views.CardDeleteView.as_view(),
         name='card-delete'
     ),
+    path(
+        'gpt-create',
+        views.GPTCreateView.as_view(),
+        name="GPT-card-creation",
+    )
 
 ]

@@ -1,0 +1,13 @@
+{% extends "cards/base.html" %}  <!-- Adjust with your base template -->
+
+{% block content %}
+    <h2>Create Flashcards with GPT</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Generate Cards</button>
+    </form>
+    <a href="{% url 'card-list' %}">
+        Cancel
+    </a>
+{% endblock %}

@@ -11,6 +11,8 @@ from .forms import CardCheckForm
 
 from .models import Card
 import random
+from .forms import GPTCreateForm
+from django.views.generic.edit import FormView
 
 class CardDeleteView(DeleteView):
     model = Card
@@ -22,8 +24,23 @@ class CardListView(ListView):
     queryset = Card.objects.all().order_by("box", "-date_created")
 class CardCreateView(CreateView):
     model = Card
-    fields = ["question", "answer", "box"]
+    fields = ["question", "answer", "box", "topic"]
     success_url = reverse_lazy("card-create")
+
+class GPTCreateView(FormView):
+    template_name = 'cards/gpt_create.html'
+    form_class = GPTCreateForm
+    success_url = reverse_lazy('some-success-view')  # Update with your success URL
+
+    def form_valid(self, form):
+        # Process the data in form.cleaned_data
+        topic = form.cleaned_data['topic']
+        number_of_cards = form.cleaned_data['number_of_cards']
+
+        # Logic to generate flashcards goes here
+
+        return super().form_valid(form)  # Redirects to success_url
+
 class CardUpdateView(CardCreateView, UpdateView):
     success_url = reverse_lazy("card-list")
 

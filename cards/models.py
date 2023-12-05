@@ -2,8 +2,16 @@
 
 from django.db import models
 
-NUM_BOXES = 5
+NUM_BOXES = 3
 BOXES = range(1, NUM_BOXES + 1)
+TOPIC_CHOICES = (
+    ('Phonetics', 'Phonetics'),
+    ('Phonology', 'Phonology'),
+    ('Morphology', 'Morphology'),
+    ('Syntax', 'Syntax'),
+    ('Semantics', 'Semantics'),
+    ('Pragmatics', 'Pragmatics'),
+)
 
 class Card(models.Model):
     question = models.CharField(max_length=100)
@@ -11,6 +19,11 @@ class Card(models.Model):
     box = models.IntegerField(
         choices=zip(BOXES, BOXES),
         default=BOXES[0],
+    )
+    topic = models.CharField(
+        max_length=20, 
+        choices=TOPIC_CHOICES,
+        default=TOPIC_CHOICES[0][0],
     )
     date_created = models.DateTimeField(auto_now_add=True)
     def move(self, solved):
