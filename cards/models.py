@@ -20,8 +20,8 @@ TOPIC_CHOICES = (
 )
 
 class Card(models.Model):
-    question = models.CharField(max_length=100)
-    answer = models.CharField(max_length=100)
+    question = models.CharField(max_length=300)
+    answer = models.CharField(max_length=300)
     box = models.CharField(
         max_length=10,
         choices=BOX_CHOICES,

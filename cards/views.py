@@ -8,11 +8,17 @@ from django.views.generic import (
 )
 from django.shortcuts import get_object_or_404, redirect
 from .forms import CardCheckForm
-
 from .models import Card
 import random
 from .forms import GPTCreateForm
 from django.views.generic.edit import FormView
+import time
+from django.conf import settings
+import os
+import openai
+
+OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+OPENAI_ASSISTANT_ID = os.environ["OPENAI_ASSISTANT_ID"]
 
 class CardDeleteView(DeleteView):
     model = Card
@@ -37,13 +43,13 @@ class CardListView(ListView):
 
         if sort_by == 'topic':
             cards_grouped = {}
-            for card in self.get_queryset().order_by('topic'):
+            for card in self.get_queryset().order_by('topic', '-date_created'):
                 cards_grouped.setdefault(card.topic, []).append(card)
             context['cards_grouped'] = cards_grouped
         else:
-            context['easy_cards'] = Card.objects.filter(box='Easy').order_by('topic')
-            context['medium_cards'] = Card.objects.filter(box='Medium').order_by('topic')
-            context['hard_cards'] = Card.objects.filter(box='Hard').order_by('topic')
+            context['easy_cards'] = Card.objects.filter(box='Easy').order_by('topic', '-date_created')
+            context['medium_cards'] = Card.objects.filter(box='Medium').order_by('topic', '-date_created')
+            context['hard_cards'] = Card.objects.filter(box='Hard').order_by('topic', '-date_created')
 
         return context
 class CardCreateView(CreateView):
@@ -60,10 +66,28 @@ class GPTCreateView(FormView):
         # Process the data in form.cleaned_data
         topic = form.cleaned_data['topic']
         number_of_cards = form.cleaned_data['number_of_cards']
-
-        # Logic to generate flashcards goes here
-
-        return super().form_valid(form)  # Redirects to success_url
+        prompt = 'COUNT:{} TOPIC:{}'.format(number_of_cards, topic)
+        print(prompt)
+        client = openai.Client(api_key=OPENAI_API_KEY)
+        my_assistant = client.beta.assistants.retrieve(OPENAI_ASSISTANT_ID)
+        thread = client.beta.threads.create(messages=[{"role": "user", "content": prompt}])
+        run = client.beta.threads.runs.create(thread_id=thread.id, assistant_id=my_assistant.id)
+        while run.status != "completed":
+            run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
+            print(run.status)
+            time.sleep(5)
+        thread_messages = client.beta.threads.messages.list(thread.id)
+        output = thread_messages.data[0].content[0].text.value
+        cards = output.split("QUESTION:")[1:]
+        source_sep = "【"
+        for card in cards:
+            q, a = card.split("ANSWER:")
+            q = q.strip()
+            a = a.split(source_sep)[0].strip()
+            newCard = Card(question=q, answer=a, box = 'Medium', topic = topic)
+            newCard.save()
+        success_url = reverse_lazy('card-list')
+        return redirect(success_url)
 
 class CardUpdateView(CardCreateView, UpdateView):
     success_url = reverse_lazy("card-list")
