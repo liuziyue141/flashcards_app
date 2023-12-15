@@ -27,8 +27,8 @@ urlpatterns = [
         name="box"
     ),
     path(
-        'card/delete/<int:pk>/',
-        views.CardDeleteView.as_view(),
+        'card/delete/<card_id>/',
+        views.delete,
         name='card-delete'
     ),
     path(
@@ -40,7 +40,20 @@ urlpatterns = [
         'topic/<str:topic_name>/', 
         views.TopicView.as_view(),
         name='topic-view',
-        ),
+    ),
+
+    path(
+        'review_new', 
+        views.review_new,
+        name='review-new',
+    ),
+
+    path(
+        'get_report',
+        views.get_report,
+        name = 'get-report',
+    ),
+
 
 
 ]

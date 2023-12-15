@@ -12,6 +12,7 @@
             <a href="?sort_by=topic" style="text-decoration: none;">Sort by Topic</a>
         </div>
     </div>
+    <a href="{% url 'get-report' %}" role="button" style="text-decoration: none;">📥 Download Report</a>
     {% if request.GET.sort_by == 'topic' %}
     <!-- Logic to display cards sorted by topic -->
         {% for topic, cards in cards_grouped.items %}

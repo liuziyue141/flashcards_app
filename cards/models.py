@@ -33,6 +33,15 @@ class Card(models.Model):
         default=TOPIC_CHOICES[0][0],
     )
     date_created = models.DateTimeField(auto_now_add=True)
+    isNew = models.BooleanField(
+        default = True,
+    )
+    
+    source = models.CharField(
+        max_length=15,
+        default = "NAN",
+    )
+
     def move(self, solved):
         if solved:
             if self.box == 'Hard':
