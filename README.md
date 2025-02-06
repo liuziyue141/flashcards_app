@@ -1,5 +1,3 @@
-Here's a comprehensive README.md for your project:
-
 # LIGN101 Flashcard Study Assistant
 
 ## Overview
